@@ -34,7 +34,7 @@ void Set(List *L, IdxType i, ElType v)
 {
     /* I.S. T terdefinisi, sembarang */
     /* F.S. Elemen T yang ke-i bernilai v */
-    (*L).A[i] = v;
+    L->A[i] = v;
 }
 
 /* ********** SELEKTOR ********** */
@@ -90,33 +90,25 @@ boolean Search(List L, ElType X)
     /* Prekondisi : X sembarang */
     /* Mengirimkan true jika terdapat elemen X di dalam list */
     /* yaitu antara FirstIdx(L)..LastIdx(L) */
-    int i = FirstIdx(L);
-    int j = LastIdx(L);
-    boolean found = true;
-    while ((i <= j) && (found))
+
+    IdxType i = FirstIdx(L);
+    boolean found = false;
+    while (i <= LastIdx(L) && found == false)
     {
         if (L.A[i] == X)
         {
-            found = false;
+            found = true;
         }
         i++;
     }
-
-    return !(found);
+    return found;
 }
 
 void InsertFirst(List *L, ElType X)
 {
     /* I.S. L terdefinisi, mungkin kosong. */
     /* F.S. v menjadi elemen pertama L. */
-    IdxType i = LastIdx(*L);
-    IdxType j = FirstIdx(*L);
-    while (i >= j)
-    {
-        Set(L, i + 1, Get(*L, i));
-        i--;
-    }
-    Set(L, j, X);
+    InsertAt(L, X, FirstIdx(*L));
 }
 
 void InsertAt(List *L, ElType X, IdxType i)
@@ -136,21 +128,14 @@ void InsertLast(List *L, ElType X)
 {
     /* I.S. L terdefinisi, mungkin kosong. */
     /* F.S. v menjadi elemen terakhir L. */
-    IdxType i = LastIdx(*L);
-    Set(L, i + 1, X);
+    InsertAt(L, X, LastIdx(*L) + 1);
 }
 
 void DeleteFirst(List *L)
 {
     /* I.S. L terdefinisi, tidak kosong. */
     /* F.S. F diset dengan elemen pertama L, elemen pertama L dihapus dari L. */
-    IdxType i = FirstIdx(*L);
-    IdxType j = LastIdx(*L);
-    while (i <= j)
-    {
-        Set(L, i, Get(*L, i + 1));
-        i++;
-    }
+    DeleteAt(L, FirstIdx(*L));
 }
 
 void DeleteAt(List *L, IdxType i)
@@ -169,8 +154,8 @@ void DeleteLast(List *L)
 {
     /* I.S. L terdefinisi, tidak kosong. */
     /* F.S. F diset dengan elemen terakhir L, elemen terakhir L dihapus dari L. */
-    IdxType i = LastIdx(*L);
-    Set(L, i, Mark);
+
+    Set(L, LastIdx(*L), Mark);
 }
 
 List Concat(List L1, List L2)
@@ -180,20 +165,20 @@ List Concat(List L1, List L2)
     /* Urutan elemen terisi dari L1, lalu L2 */
     /* Contoh : L1 : [1, 2]; L2 : [3, 4]; Mengembalikan [1, 2, 3, 4] */
     List L3 = MakeList();
+
     ElType i = FirstIdx(L1);
-    ElType j = FirstIdx(L2);
-    IdxType idx = 0;
     while (i <= LastIdx(L1))
     {
-        Set(&L3, idx, Get(L1, i));
+        Set(&L3, i, Get(L1, i));
         i++;
-        idx++;
     }
+
+    ElType j = FirstIdx(L2);
     while (j <= LastIdx(L2))
     {
-        Set(&L3, idx, Get(L2, j));
+        Set(&L3, i, Get(L2, j));
         j++;
-        idx++;
+        i++;
     }
     return L3;
 }
