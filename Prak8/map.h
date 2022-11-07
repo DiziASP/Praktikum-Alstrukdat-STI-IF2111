@@ -11,7 +11,6 @@ Deklarasi stack yang dengan implementasi array eksplisit-statik rata kiri
 // #define true 1
 #define Nil 0
 #define MaxEl 10
-#define Undefined -999
 
 // typedef int bool;
 typedef int keytype;
@@ -20,14 +19,14 @@ typedef int address;
 
 typedef struct
 {
-    keytype Key;
-    valuetype Value;
+        keytype Key;
+        valuetype Value;
 } infotype;
 
 typedef struct
 {
-    infotype Elements[MaxEl];
-    address Count;
+        infotype Elements[MaxEl];
+        address Count;
 } Map;
 
 /* Definisi Map M kosong : M.Count = Nil */
@@ -54,7 +53,6 @@ boolean IsFull(Map M);
 /* ********** Operator Dasar Map ********* */
 valuetype Value(Map M, keytype k);
 /* Mengembalikan nilai value dengan key k dari M */
-/* Jika tidak ada key k pada M, akan mengembalikan Undefined */
 
 void Insert(Map *M, keytype k, valuetype v);
 /* Menambahkan Elmt sebagai elemen Map M. */
@@ -70,18 +68,5 @@ void Delete(Map *M, keytype k);
 
 boolean IsMember(Map M, keytype k);
 /* Mengembalikan true jika k adalah member dari M */
-
-void PrintMap(Map M);
-/* I.S. M terdefinisi */
-/* F.S. M dicetak ke layar dengan format:
-        <key1> : <value1>
-        <key2> : <value2>
-        ...
-        <keyn> : <valuen>
-*/
-
-void find(Map M, valuetype v, keytype *k);
-/* I.S. M terdefinisi */
-/* F.S. k adalah key dari M dengan value v */
 
 #endif
