@@ -4,7 +4,7 @@
 /****************** TEST LIST KOSONG ******************/
 boolean IsEmpty(List L)
 {
-    return First(L) == Nil;
+    return First(L) == Last(L);
 }
 /* Mengirim true jika list kosong: First(L) = dummy@
 dan Last(L) = dummy@ */
@@ -55,11 +55,12 @@ void Dealokasi(address P)
 address Search(List L, ElType X)
 {
     address P = First(L);
-    while (P != Nil && Info(P) != X)
+    address pDummy = Last(L);
+    while (P != pDummy && Info(P) != X)
     {
         P = Next(P);
     }
-    return P;
+    return P != pDummy ? P : Nil;
 }
 /* Mencari apakah ada node list dengan info(P) = X */
 /* Jika ada, mengirimkan address node tersebut. */
@@ -80,11 +81,23 @@ void InsertFirst(List *L, ElType X)
 /* F.S. Menambahkan elemen X sebagai elemen pertama List L */
 void InsertLast(List *L, ElType X)
 {
-    address P = Alokasi(X);
-    if (P != Nil)
+    if (IsEmpty(*L))
     {
-        Next(Last(*L)) = P;
-        Last(*L) = P;
+        InsertFirst(L, X);
+    }
+    else
+    {
+        address P = Alokasi(X);
+        if (P != Nil)
+        {
+            address last = First(*L);
+            while (Info(Next(last)) != 0)
+            {
+                last = Next(last);
+            }
+            Next(last) = P;
+            Next(P) = Last(*L);
+        }
     }
 }
 /* I.S. List L terdefinisi */
@@ -96,12 +109,9 @@ void InsertLast(List *L, ElType X)
 void DeleteFirst(List *L, ElType *X)
 {
     address P = First(*L);
-    if (P != Nil)
-    {
-        First(*L) = Next(P);
-        *X = Info(P);
-        Dealokasi(P);
-    }
+    *X = Info(P);
+    First(*L) = Next(First(*L));
+    Dealokasi(P);
 }
 /* I.S. List tidak kosong */
 /* F.S. X adalah elemen pertama list sebelum penghapusan */
@@ -109,18 +119,25 @@ void DeleteFirst(List *L, ElType *X)
 /* First element yg baru adalah suksesor elemen pertama yang lama */
 void DeleteLast(List *L, ElType *X)
 {
-    address P = First(*L);
-    if (P != Nil)
+    address last, precLast;
+    /* Algoritma */
+    last = First(*L);
+    precLast = Nil;
+    while (Next(last) != Last(*L))
     {
-        while (Next(Next(P)) != Nil)
-        {
-            P = Next(P);
-        }
-        *X = Info(Next(P));
-        Dealokasi(Next(P));
-        Next(P) = Nil;
-        Last(*L) = P;
+        precLast = last;
+        last = Next(last);
     }
+    *X = Info(last);
+    if (precLast == Nil)
+    { /* kasus satu elemen */
+        First(*L) = Last(*L);
+    }
+    else
+    {
+        Next(precLast) = Last(*L);
+    }
+    free(last);
 }
 /* I.S. List tidak kosong */
 /* F.S. X adalah terakhir sebelum dummy pada list sebelum penghapusan */
